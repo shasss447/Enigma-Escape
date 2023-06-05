@@ -1,9 +1,8 @@
-#include "Player.h"
-
-Player::Player()
+#include "Enemy.h"
+Enemy::Enemy()
 {
-	x_pos = 320.f;
-	y_pos = 240.f;
+	x_pos = 100.f;
+	y_pos = 100.f;
 	speed = 5;
 	posrec = {
 	 (int)x_pos,

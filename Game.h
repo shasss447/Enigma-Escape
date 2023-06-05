@@ -5,6 +5,7 @@
 #include"Player.h"
 #include<vector>
 #include"Sprite.h"
+#include"Enemy.h"
 using namespace std;
 class Game
 {
@@ -22,12 +23,16 @@ private:
 	SDL_Window* window;
 	bool isRunning = true;
     Player myplayer;
+	Enemy enemy;
 	int cellWidth;
 	int cellHeight;
 	int numRows;
 	int numCols;
-	int A[17][25];
+	vector<vector<int>>grid;
 	vector<string> texturePaths;
 	vector<SDL_Texture*> textures;
+	const Uint8* keys;
+    int offSetx;
+	int offSety;
 };
 
