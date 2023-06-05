@@ -1,9 +1,9 @@
 #pragma once
 #include<SDL.h>
-class player
+class Player
 {
 public:
-	player();
+	Player();
 	float x_pos;
 	float y_pos;
 	int speed;

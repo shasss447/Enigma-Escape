@@ -1,6 +1,6 @@
-#include "player.h"
+#include "Player.h"
 
-player::player()
+Player::Player()
 {
 	x_pos = 100.f;
 	y_pos = 100.f;
