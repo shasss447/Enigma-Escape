@@ -8,6 +8,17 @@ using namespace std;
 SDL_Renderer* renderer;
 SDL_Window* window;
 bool isRunning = 1;
+SDL_Texture* loadIm(string path)
+{
+    SDL_Surface* temsur = IMG_Load(path.c_str());
+    if (temsur == NULL)
+        cout << "surface fail" << SDL_GetError() << endl;
+    SDL_Texture* tex = SDL_CreateTextureFromSurface(renderer, temsur);
+    if (tex == NULL)
+        cout << "surface fail" << SDL_GetError() << endl;
+    SDL_FreeSurface(temsur);
+    return tex;
+}
 int main(int argc, char* argv[])
 {  
     int cellWidth = 32;
@@ -28,10 +39,17 @@ int main(int argc, char* argv[])
     vector<SDL_Texture*> textures;
     if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO) != 0)
         cout << "init fail" << SDL_GetError() << endl;
-    if (SDL_CreateWindowAndRenderer(800, 554, 0, &window, &renderer) != 0)
-        cout << "rendered fail" << SDL_GetError() << endl;
-   
+    if (IMG_Init(IMG_INIT_PNG) == 0)
+        cout << "image init fail" << IMG_GetError << endl;
+    window = SDL_CreateWindow("car_race", 400, 100, 800, 554, 0);
+    if(window==NULL)
+        cout << "window fail" << SDL_GetError() << endl;
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    if (renderer == NULL)
+        cout << "renderer fail" << SDL_GetError() << endl;
+    
     player player;
+    player.texture= loadIm("player/car.bmp");
     while (isRunning)
     {
         Uint64 start = SDL_GetPerformanceCounter();
@@ -63,22 +81,9 @@ int main(int argc, char* argv[])
         player.posrec.y = player.y_pos;
         SDL_SetRenderDrawColor(renderer,255,0,255, 255);
         SDL_RenderClear(renderer);
-        for (const string& path : texturePaths) {
-            SDL_Surface* surface = IMG_Load(path.c_str());
-            if (!surface) {
-                cout << "Failed to load image: " << path <<endl;
-                // Handle the error if the image failed to load
-            }
-            SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
-            SDL_FreeSurface(surface);
-
-            if (!texture) {
-                cout << "Failed to create texture for: " << path <<endl;
-                // Handle the error if the texture creation failed
-            }
-
-            textures.push_back(texture);
-        }
+        for (const string& path : texturePaths)
+            textures.push_back(loadIm(path));
+       
 
         for (int row = 0; row < numRows; ++row)
         {
@@ -107,7 +112,7 @@ int main(int argc, char* argv[])
                 SDL_RenderCopy(renderer, currentTexture, nullptr, &cellRect);
             }
         }
-        SDL_RenderFillRect(renderer, &player.posrec);
+        SDL_RenderCopy(renderer,player.texture,NULL, &player.posrec);
         SDL_RenderPresent(renderer);
         Uint64 end = SDL_GetPerformanceCounter();
         float elapsedMS = (end - start) / (float)SDL_GetPerformanceFrequency() * 1000.0f;

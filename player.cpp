@@ -11,4 +11,5 @@ player::player()
 	 32,
 	 32
 	};
+	texture = NULL;
 }

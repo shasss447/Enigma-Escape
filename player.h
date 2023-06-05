@@ -8,5 +8,6 @@ public:
 	float y_pos;
 	int speed;
 	SDL_Rect posrec;
+	SDL_Texture* texture;
 };
 
