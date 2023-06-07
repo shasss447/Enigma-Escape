@@ -5,22 +5,22 @@ Game::Game()
         cout << "init fail" << SDL_GetError() << endl;
     if (IMG_Init(IMG_INIT_PNG) == 0)
         cout << "image init fail" << IMG_GetError << endl;
-    window = SDL_CreateWindow("car_race", 400, 100, 640, 480, 0);
+    window = SDL_CreateWindow("car_race", 400, 100, 800, 600, 0);
     if (window == NULL)
         cout << "window fail" << SDL_GetError() << endl;
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (renderer == NULL)
         cout << "renderer fail" << SDL_GetError() << endl;
-    cellWidth = 32;
-    cellHeight = 32;
-    numRows = 20;
-    numCols = 25;
+    cellWidth = 25;
+    cellHeight = 25;
+    numRows = 24;
+    numCols = 32;
     grid.resize(numRows,vector<int>(numCols,0));
     for (int i = 0; i < numRows; i++)
     {
         for (int j = 0; j < numCols; j++)
         {
-            if (i == 0 || j == 0)
+            if (i>=8&&i<14||i>=16&&i<19)
                 grid[i][j] = INT_MAX;
         }
     }
@@ -30,7 +30,7 @@ Game::Game()
     };
     
     keys = SDL_GetKeyboardState(NULL);
-    //offSetx = 0;
+    offSetx = 0;
 }
 void Game::loop()
 {
@@ -58,7 +58,7 @@ void Game::handleEvent()
         {
             if (event.key.keysym.sym == SDLK_UP)
             {
-                if(myplayer.y_pos>32)
+                if(myplayer.y_pos>25)
                 {
                     myplayer.y_pos -= myplayer.speed;
                     offSety -= myplayer.speed;
@@ -66,7 +66,7 @@ void Game::handleEvent()
             }
             if (event.key.keysym.sym == SDLK_DOWN)
             {
-                if(myplayer.y_pos<480)
+                if(myplayer.y_pos<600)
                 {
                     myplayer.y_pos += myplayer.speed;
                     offSety += myplayer.speed;
@@ -74,7 +74,7 @@ void Game::handleEvent()
             }
             if (event.key.keysym.sym == SDLK_LEFT)
             {
-                if(myplayer.x_pos>32)
+                if(myplayer.x_pos>25)
                 {
                     myplayer.x_pos -= myplayer.speed;
                     offSetx -= myplayer.speed; // Adjust the X offset when moving left
@@ -82,7 +82,7 @@ void Game::handleEvent()
             }
             if (event.key.keysym.sym == SDLK_RIGHT)
             {
-                if(myplayer.x_pos<640)
+                if(myplayer.x_pos<800)
                 {
                     myplayer.x_pos += myplayer.speed;
                     offSetx += myplayer.speed; // Adjust the X offset when moving right
