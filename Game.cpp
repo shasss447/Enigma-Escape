@@ -20,9 +20,11 @@ Game::Game()
     {
         for (int j = 0; j < numCols; j++)
         {
-            if (i>=8&&i<14||i>=16&&i<19)
-                grid[i][j] = INT_MAX;
+            if (i<=9&&j>20&&j<24||i>9&&i<13&&j>=5&&j<25||i>13&&j>=5&&j<9)
+                grid[i][j] = 1;
+            cout << grid[i][j];
         }
+        cout <<endl;
     }
     texturePaths = {
         "textures/stone.bmp",
@@ -58,15 +60,16 @@ void Game::handleEvent()
         {
             if (event.key.keysym.sym == SDLK_UP)
             {
-                if(myplayer.y_pos>25)
+                if (myplayer.y_pos > 25 && grid[(int)((myplayer.y_pos+5) / 25)][(int)(myplayer.x_pos / 25)] != 0)
                 {
+                    cout << (int)(myplayer.y_pos / 25) << " " << (int)(myplayer.x_pos / 25) << endl;
                     myplayer.y_pos -= myplayer.speed;
                     offSety -= myplayer.speed;
                 }
             }
             if (event.key.keysym.sym == SDLK_DOWN)
             {
-                if(myplayer.y_pos<600)
+                if(myplayer.y_pos<600&& grid[(int)((myplayer.y_pos+35) / 25)][(int)(myplayer.x_pos / 25)] != 0)
                 {
                     myplayer.y_pos += myplayer.speed;
                     offSety += myplayer.speed;
@@ -74,7 +77,7 @@ void Game::handleEvent()
             }
             if (event.key.keysym.sym == SDLK_LEFT)
             {
-                if(myplayer.x_pos>25)
+                if(myplayer.x_pos>25 && grid[(int)(myplayer.y_pos / 25)][(int)((myplayer.x_pos+5) / 25)] !=0)
                 {
                     myplayer.x_pos -= myplayer.speed;
                     offSetx -= myplayer.speed; // Adjust the X offset when moving left
@@ -82,7 +85,7 @@ void Game::handleEvent()
             }
             if (event.key.keysym.sym == SDLK_RIGHT)
             {
-                if(myplayer.x_pos<800)
+                if(myplayer.x_pos<800&& grid[(int)(myplayer.y_pos / 25)][(int)((myplayer.x_pos+25 ) / 25)] != 0)
                 {
                     myplayer.x_pos += myplayer.speed;
                     offSetx += myplayer.speed; // Adjust the X offset when moving right
