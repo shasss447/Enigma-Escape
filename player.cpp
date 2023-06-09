@@ -12,4 +12,8 @@ Player::Player()
 	 50
 	};
 	texture = NULL;
+	previousDirection = FacingDirection::Right;
+	currentDirection = FacingDirection::Right;
+	angle = 0;
+	change = false;
 }

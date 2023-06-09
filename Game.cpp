@@ -20,11 +20,11 @@ Game::Game()
     {
         for (int j = 0; j < numCols; j++)
         {
-            if (i<=9&&j>20&&j<24||i>9&&i<13&&j>=5&&j<25||i>13&&j>=5&&j<9)
+            //if (i<=9&&j>20&&j<24||i>9&&i<13&&j>=5&&j<24||i>=13&&j>=5&&j<9)
                 grid[i][j] = 1;
-            cout << grid[i][j];
+           // cout << grid[i][j];
         }
-        cout <<endl;
+       // cout <<endl;
     }
     texturePaths = {
         "textures/stone.bmp",
@@ -62,9 +62,12 @@ void Game::handleEvent()
             {
                 if (myplayer.y_pos > 25 && grid[(int)((myplayer.y_pos+5) / 25)][(int)(myplayer.x_pos / 25)] != 0)
                 {
-                    cout << (int)(myplayer.y_pos / 25) << " " << (int)(myplayer.x_pos / 25) << endl;
                     myplayer.y_pos -= myplayer.speed;
                     offSety -= myplayer.speed;
+                    myplayer.previousDirection = myplayer.currentDirection;
+                    myplayer.currentDirection = Player::FacingDirection::Up;
+                    myplayer.change = true;
+                    cout << myplayer.previousDirection << " " << myplayer.currentDirection << " " << myplayer.angle << endl;
                 }
             }
             if (event.key.keysym.sym == SDLK_DOWN)
@@ -73,6 +76,10 @@ void Game::handleEvent()
                 {
                     myplayer.y_pos += myplayer.speed;
                     offSety += myplayer.speed;
+                    myplayer.previousDirection = myplayer.currentDirection;
+                    myplayer.currentDirection = Player::FacingDirection::Down;
+                    myplayer.change = true;
+                    cout << myplayer.previousDirection << " " << myplayer.currentDirection << " " << myplayer.angle << endl;
                 }
             }
             if (event.key.keysym.sym == SDLK_LEFT)
@@ -81,6 +88,10 @@ void Game::handleEvent()
                 {
                     myplayer.x_pos -= myplayer.speed;
                     offSetx -= myplayer.speed; // Adjust the X offset when moving left
+                    myplayer.previousDirection = myplayer.currentDirection;
+                    myplayer.currentDirection = Player::FacingDirection::Left;
+                    myplayer.change = true;
+                    cout << myplayer.previousDirection << " " << myplayer.currentDirection << " "<<myplayer.angle<<endl;
                 }
             }
             if (event.key.keysym.sym == SDLK_RIGHT)
@@ -89,6 +100,10 @@ void Game::handleEvent()
                 {
                     myplayer.x_pos += myplayer.speed;
                     offSetx += myplayer.speed; // Adjust the X offset when moving right
+                    myplayer.previousDirection = myplayer.currentDirection;
+                    myplayer.currentDirection = Player::FacingDirection::Right;
+                    myplayer.change = true;
+                    cout << myplayer.previousDirection << " " << myplayer.currentDirection << " " << myplayer.angle << endl;
                 }
             }
 
@@ -99,6 +114,51 @@ void Game::update()
 {
     myplayer.posrec.x = myplayer.x_pos -offSetx;
     myplayer.posrec.y = myplayer.y_pos -offSety;
+    if (myplayer.change)
+    {
+        if (myplayer.previousDirection == Player::FacingDirection::Right)
+        {
+            if (myplayer.currentDirection == Player::FacingDirection::Up)
+                myplayer.angle = myplayer.angle - 90;
+            else if (myplayer.currentDirection == Player::FacingDirection::Down)
+                myplayer.angle = myplayer.angle + 90;
+            else if (myplayer.currentDirection == Player::FacingDirection::Left)
+                //flip = SDL_FLIP_HORIZONTAL;
+                myplayer.angle = myplayer.angle + 180;
+
+        }
+        else if (myplayer.previousDirection == Player::FacingDirection::Up)
+        {
+            if (myplayer.currentDirection == Player::FacingDirection::Left)
+                myplayer.angle = myplayer.angle - 90;
+            else if (myplayer.currentDirection == Player::FacingDirection::Right)
+                myplayer.angle = myplayer.angle + 90;
+            else if (myplayer.currentDirection == Player::FacingDirection::Down)
+                //flip = SDL_FLIP_VERTICAL;
+                myplayer.angle = myplayer.angle + 180;
+        }
+        else if (myplayer.previousDirection == Player::FacingDirection::Left)
+        {
+            if (myplayer.currentDirection == Player::FacingDirection::Down)
+                myplayer.angle = myplayer.angle - 90;
+            else if (myplayer.currentDirection == Player::FacingDirection::Up)
+                myplayer.angle = myplayer.angle + 90;
+            else if (myplayer.currentDirection == Player::FacingDirection::Right)
+                //flip = SDL_FLIP_HORIZONTAL;
+                myplayer.angle = myplayer.angle + 180;
+        }
+        else if (myplayer.previousDirection == Player::FacingDirection::Down)
+        {
+            if (myplayer.currentDirection == Player::FacingDirection::Right)
+                myplayer.angle = myplayer.angle + 90;
+            else if (myplayer.currentDirection == Player::FacingDirection::Left)
+                myplayer.angle = myplayer.angle - 90;
+            else if (myplayer.currentDirection == Player::FacingDirection::Up)
+                //flip = SDL_FLIP_VERTICAL;
+                myplayer.angle = myplayer.angle + 180;
+        }
+        myplayer.change = false;
+    }
 }
 void Game::draw()
 {
@@ -123,22 +183,17 @@ void Game::draw()
             int y = (row * cellHeight) - offSety;
 
             SDL_Texture* currentTexture = nullptr;
-            int cellType = grid[row][col];  // Assume grid stores cell types (e.g., 0 for road, 1 for grass, 2 for rock)
+            int cellType = grid[row][col]; 
            if(cellType==0) 
               currentTexture = textures[0];
            else
               currentTexture = textures[1];
-                // Handle other cell types as needed
-            // Draw vertical line
-            //SDL_RenderDrawLine(renderer, x, 0, x, 600);
-
-            // Draw horizontal line
-            //SDL_RenderDrawLine(renderer, 0, y, 800, y);
             SDL_Rect cellRect = { x, y, cellWidth, cellHeight };
             SDL_RenderCopy(renderer, currentTexture, nullptr, &cellRect);
         }
     }
-    SDL_RenderCopy(renderer, myplayer.texture, NULL, &myplayer.posrec);
+    SDL_RendererFlip flip = SDL_FLIP_NONE; // Default flip
+    SDL_RenderCopyEx(renderer, myplayer.texture, NULL, &myplayer.posrec,myplayer.angle, NULL,flip);
     SDL_RenderCopy(renderer, enemy.texture, NULL, &enemy.posrec);
     SDL_RenderPresent(renderer);
 }
