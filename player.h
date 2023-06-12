@@ -1,11 +1,13 @@
 #pragma once
+#include<iostream>
 #include<SDL.h>
+#include<utility>
+using namespace std;
 class Player
 {
 public:
 	Player();
-	float x_pos;
-	float y_pos;
+	std::pair<int, int>p_pos;
 	int speed;
 	SDL_Rect posrec;
 	SDL_Texture* texture;

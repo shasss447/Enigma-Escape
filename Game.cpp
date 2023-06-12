@@ -1,4 +1,5 @@
 #include "Game.h"
+
 Game::Game()
 {
     if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO) != 0)
@@ -32,7 +33,15 @@ Game::Game()
     };
     
     keys = SDL_GetKeyboardState(NULL);
-    offSetx = 0;
+    offset.first = 0;
+    offset.second = 0;
+    //cout << "enter cord" << endl;
+    //cin >> de_pos.first >> de_pos.second;
+}
+void Game::shortestpath(int p_x, int p_y, int d_x, int d_y)
+{
+    priority_queue<pair<int,int>>q;
+    
 }
 void Game::loop()
 {
@@ -60,10 +69,10 @@ void Game::handleEvent()
         {
             if (event.key.keysym.sym == SDLK_UP)
             {
-                if (myplayer.y_pos > 25 && grid[(int)((myplayer.y_pos+5) / 25)][(int)(myplayer.x_pos / 25)] != 0)
+                if (myplayer.p_pos.second > 25 && grid[(int)((myplayer.p_pos.second+5) / 25)][(int)(myplayer.p_pos.first / 25)] != 0)
                 {
-                    myplayer.y_pos -= myplayer.speed;
-                    offSety -= myplayer.speed;
+                    myplayer.p_pos.second -= myplayer.speed;
+                    offset.second -= myplayer.speed;
                     myplayer.previousDirection = myplayer.currentDirection;
                     myplayer.currentDirection = Player::FacingDirection::Up;
                     myplayer.change = true;
@@ -72,10 +81,10 @@ void Game::handleEvent()
             }
             if (event.key.keysym.sym == SDLK_DOWN)
             {
-                if(myplayer.y_pos<600&& grid[(int)((myplayer.y_pos+35) / 25)][(int)(myplayer.x_pos / 25)] != 0)
+                if(myplayer.p_pos.second <600&& grid[(int)((myplayer.p_pos.second +35) / 25)][(int)(myplayer.p_pos.first / 25)] != 0)
                 {
-                    myplayer.y_pos += myplayer.speed;
-                    offSety += myplayer.speed;
+                    myplayer.p_pos.second += myplayer.speed;
+                    offset.second += myplayer.speed;
                     myplayer.previousDirection = myplayer.currentDirection;
                     myplayer.currentDirection = Player::FacingDirection::Down;
                     myplayer.change = true;
@@ -84,10 +93,10 @@ void Game::handleEvent()
             }
             if (event.key.keysym.sym == SDLK_LEFT)
             {
-                if(myplayer.x_pos>25 && grid[(int)(myplayer.y_pos / 25)][(int)((myplayer.x_pos+5) / 25)] !=0)
+                if(myplayer.p_pos.first >25 && grid[(int)(myplayer.p_pos.second / 25)][(int)((myplayer.p_pos.first +5) / 25)] !=0)
                 {
-                    myplayer.x_pos -= myplayer.speed;
-                    offSetx -= myplayer.speed; // Adjust the X offset when moving left
+                    myplayer.p_pos.first -= myplayer.speed;
+                    offset.first -= myplayer.speed; // Adjust the X offset when moving left
                     myplayer.previousDirection = myplayer.currentDirection;
                     myplayer.currentDirection = Player::FacingDirection::Left;
                     myplayer.change = true;
@@ -96,10 +105,10 @@ void Game::handleEvent()
             }
             if (event.key.keysym.sym == SDLK_RIGHT)
             {
-                if(myplayer.x_pos<800&& grid[(int)(myplayer.y_pos / 25)][(int)((myplayer.x_pos+25 ) / 25)] != 0)
+                if(myplayer.p_pos.first <800&& grid[(int)(myplayer.p_pos.second / 25)][(int)((myplayer.p_pos.first +25 ) / 25)] != 0)
                 {
-                    myplayer.x_pos += myplayer.speed;
-                    offSetx += myplayer.speed; // Adjust the X offset when moving right
+                    myplayer.p_pos.first += myplayer.speed;
+                    offset.first += myplayer.speed; // Adjust the X offset when moving right
                     myplayer.previousDirection = myplayer.currentDirection;
                     myplayer.currentDirection = Player::FacingDirection::Right;
                     myplayer.change = true;
@@ -112,8 +121,9 @@ void Game::handleEvent()
 }
 void Game::update()
 {
-    myplayer.posrec.x = myplayer.x_pos -offSetx;
-    myplayer.posrec.y = myplayer.y_pos -offSety;
+    myplayer.posrec.x = myplayer.p_pos.first - offset.first;
+    myplayer.posrec.y = myplayer.p_pos.second - offset.second;
+    //shortestpath(myplayer.p_pos.second / 25, myplayer.p_pos.first / 25, (de_pos.second + offset.second) / 25, (de_pos.first + offset.first) / 25);
     if (myplayer.change)
     {
         if (myplayer.previousDirection == Player::FacingDirection::Right)
@@ -179,8 +189,8 @@ void Game::draw()
     {
         for (int col = 0; col < numCols; ++col)
         {
-            int x = (col * cellWidth) - offSetx;
-            int y = (row * cellHeight) - offSety;
+            int x = (col * cellWidth) - offset.first;
+            int y = (row * cellHeight) - offset.second;
 
             SDL_Texture* currentTexture = nullptr;
             int cellType = grid[row][col]; 

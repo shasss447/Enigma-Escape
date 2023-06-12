@@ -2,18 +2,19 @@
 
 Player::Player()
 {
-	x_pos = 375.f;
-	y_pos = 275.f;
-	speed = 5;
+	 p_pos.first= 375;
+	p_pos.second = 275;
+	speed = 25;
 	posrec = {
-	 (int)x_pos,
-	 (int)y_pos,
+	p_pos.first,
+	p_pos.second,
 	 50,
 	 50
 	};
 	texture = NULL;
-	previousDirection = FacingDirection::Right;
-	currentDirection = FacingDirection::Right;
+	previousDirection = FacingDirection::Left;
+	currentDirection = FacingDirection::Left;
 	angle = 0;
 	change = false;
+
 }

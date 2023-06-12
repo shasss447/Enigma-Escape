@@ -1,12 +1,9 @@
 #pragma once
-#include<iostream>
-#include<SDL.h>
-#include<SDL_image.h>
 #include"Player.h"
 #include<vector>
 #include"Sprite.h"
 #include"Enemy.h"
-using namespace std;
+#include <queue>
 class Game
 {
 public:
@@ -16,6 +13,8 @@ public:
 	void update();
 	void draw();
 	void cleanup();
+	void shortestpath(int p_x, int p_y, int d_x, int d_y);
+	pair<int, int>de_pos;
 
 private:
 
@@ -32,7 +31,6 @@ private:
 	vector<string> texturePaths;
 	vector<SDL_Texture*> textures;
 	const Uint8* keys;
-    int offSetx;
-	int offSety;
+	pair<int, int>offset;
 };
 
