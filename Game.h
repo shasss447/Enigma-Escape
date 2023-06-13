@@ -13,7 +13,7 @@ public:
 	void update();
 	void draw();
 	void cleanup();
-	void shortestpath(int p_x, int p_y, int d_x, int d_y);
+	void shortestpath(int p_x, int p_y, int d_x, int d_y,vector<pair<int,int>>&path);
 	pair<int, int>de_pos;
 
 private:
@@ -30,6 +30,7 @@ private:
 	vector<vector<int>>grid;
 	vector<string> texturePaths;
 	vector<SDL_Texture*> textures;
+	vector<pair<int, int>>path;
 	const Uint8* keys;
 	pair<int, int>offset;
 };

@@ -35,13 +35,75 @@ Game::Game()
     keys = SDL_GetKeyboardState(NULL);
     offset.first = 0;
     offset.second = 0;
-    //cout << "enter cord" << endl;
-    //cin >> de_pos.first >> de_pos.second;
+    cout << "enter cord" << endl;
+    cin >> de_pos.first >> de_pos.second;
 }
-void Game::shortestpath(int p_x, int p_y, int d_x, int d_y)
+void Game::shortestpath(int p_x, int p_y, int d_x, int d_y,vector<pair<int,int>>&path)
 {
-    priority_queue<pair<int,int>>q;
-    
+    priority_queue<pair<int,pair<int,int>>>q;
+    int neighbour[] = { 1,-1,1,-1 };
+    q.push({ 0, { p_x,p_y } });
+    vector<vector<pair<int,int>>>came_from;
+    vector<vector<int>>cost_so_far;
+    came_from[p_x][p_y] = { p_x, p_y };
+    cost_so_far[p_x][p_y] = 0;
+    while (!q.empty())
+    {
+        pair<int, pair<int, int>>curr = q.top();
+        int dis = curr.first;
+        int curr_x = curr.second.first;
+        int curr_y = curr.second.second;
+        if (curr_x == d_x && curr_y == d_y)
+            break;
+        if (grid[curr_x + 1][curr_y])
+        {
+            int new_cost = cost_so_far[curr_x][curr_y] + grid[curr_x + 1][curr_y];
+            if (!cost_so_far[curr_x + 1][curr_y] || new_cost < cost_so_far[curr_x + 1][curr_y])
+            {
+                cost_so_far[curr_x + 1][curr_y] = new_cost;
+                q.push({ new_cost, { curr_x + 1,curr_y } });
+                came_from[curr_x + 1][curr_y] = { curr_x,curr_y };
+            }
+        }
+        if (grid[curr_x - 1][curr_y])
+        {
+            int new_cost = cost_so_far[curr_x][curr_y] + grid[curr_x - 1][curr_y];
+            if (!cost_so_far[curr_x - 1][curr_y] || new_cost < cost_so_far[curr_x + 1][curr_y])
+            {
+                cost_so_far[curr_x - 1][curr_y] = new_cost;
+                q.push({ new_cost, { curr_x -1,curr_y } });
+                came_from[curr_x - 1][curr_y] = { curr_x,curr_y };
+            }
+        }
+        if (grid[curr_x ][curr_y + 1])
+        {
+            int new_cost = cost_so_far[curr_x][curr_y] + grid[curr_x][curr_y + 1];
+            if (!cost_so_far[curr_x][curr_y + 1] || new_cost < cost_so_far[curr_x][curr_y + 1])
+            {
+                cost_so_far[curr_x][curr_y + 1] = new_cost;
+                q.push({ new_cost, { curr_x ,curr_y + 1 } });
+                came_from[curr_x][curr_y + 1] = { curr_x,curr_y };
+            }
+        }
+        if (grid[curr_x][curr_y - 1])
+        {
+            int new_cost = cost_so_far[curr_x][curr_y] + grid[curr_x][curr_y - 1];
+            if (!cost_so_far[curr_x][curr_y - 1] || new_cost < cost_so_far[curr_x][curr_y - 1])
+            {
+                cost_so_far[curr_x][curr_y - 1] = new_cost;
+                q.push({ new_cost, { curr_x ,curr_y - 1 } });
+                came_from[curr_x][curr_y - 1] = { curr_x,curr_y };
+            }
+        }
+
+    }
+    while (d_x != p_x && d_y != p_y)
+    {
+        path.push_back({ came_from[d_x][d_y] });
+        d_x = came_from[d_x][d_y].first;
+        d_y = came_from[d_x][d_y].second;
+    }
+
 }
 void Game::loop()
 {
@@ -123,7 +185,7 @@ void Game::update()
 {
     myplayer.posrec.x = myplayer.p_pos.first - offset.first;
     myplayer.posrec.y = myplayer.p_pos.second - offset.second;
-    //shortestpath(myplayer.p_pos.second / 25, myplayer.p_pos.first / 25, (de_pos.second + offset.second) / 25, (de_pos.first + offset.first) / 25);
+    shortestpath(myplayer.p_pos.second / 25, myplayer.p_pos.first / 25, (de_pos.second + offset.second) / 25, (de_pos.first + offset.first) / 25,path);
     if (myplayer.change)
     {
         if (myplayer.previousDirection == Player::FacingDirection::Right)
@@ -201,6 +263,12 @@ void Game::draw()
             SDL_Rect cellRect = { x, y, cellWidth, cellHeight };
             SDL_RenderCopy(renderer, currentTexture, nullptr, &cellRect);
         }
+    }
+    for (int i = 0; i < path.size(); i++)
+    {
+        int x = (path[i].second * cellWidth) - offset.first;
+        int y = (path[i].first * cellHeight) - offset.second; SDL_Rect cellRect = { x, y, cellWidth, cellHeight };
+        SDL_RenderCopy(renderer, textures[0], nullptr, &cellRect);
     }
     SDL_RendererFlip flip = SDL_FLIP_NONE; // Default flip
     SDL_RenderCopyEx(renderer, myplayer.texture, NULL, &myplayer.posrec,myplayer.angle, NULL,flip);
