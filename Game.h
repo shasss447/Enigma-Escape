@@ -4,6 +4,7 @@
 #include"Sprite.h"
 #include"Enemy.h"
 #include <queue>
+
 class Game
 {
 public:
@@ -13,8 +14,7 @@ public:
 	void update();
 	void draw();
 	void cleanup();
-	void shortestpath(int p_x, int p_y, int d_x, int d_y,vector<pair<int,int>>&path);
-	pair<int, int>de_pos;
+
 
 private:
 
