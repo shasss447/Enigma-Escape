@@ -1,5 +1,10 @@
 #pragma once
+#include<math.h>
 //shortestpath(myplayer.p_pos.second / 25, myplayer.p_pos.first / 25, (de_pos.second + offset.second) / 25, (de_pos.first + offset.first) / 25,path);
+int heuristic(int curr_x, int curr_y, int& d_x, int& d_y)
+{
+    return abs(curr_x - d_x) + abs(curr_y - d_y);
+}
 struct Compare
 {
     bool operator()(const pair<int, pair<int, int>>& p1, const pair<int, pair<int, int>>& p2) const
@@ -33,56 +38,61 @@ void shortestpath(int &numRows,int &numCols,int p_x, int p_y,int offsetx,int off
         cout << dis << " " << curr_x << " " << curr_y << endl;
         if (curr_x == d_x && curr_y == d_y)
             break;
-        if (curr_x + 1 < numRows)
+        if (curr_x + 1 < numRows&&came_from[curr_x][curr_y].first!=curr_x+1)
         {
             cout << "row+1" << endl;
             int new_cost = dis + grid[curr_x + 1][curr_y];
             if (cost_so_far[curr_x + 1][curr_y] == 0 || new_cost < cost_so_far[curr_x + 1][curr_y])
             {
                 cost_so_far[curr_x + 1][curr_y] = new_cost;
-                q.push({ new_cost, { curr_x + 1,curr_y } });
+
+                q.push({ new_cost+heuristic(curr_x+1,curr_y,d_x,d_y), {curr_x + 1,curr_y}});
                 came_from[curr_x + 1][curr_y] = { curr_x,curr_y };
             }
         }
-        if (curr_x - 1 >= 0)
+        if (curr_x - 1 >= 0&&came_from[curr_x][curr_y].first != curr_x - 1)
         {
             cout << "row-1" << endl;
             int new_cost = dis + grid[curr_x - 1][curr_y];
             if (cost_so_far[curr_x - 1][curr_y] == 0 || new_cost < cost_so_far[curr_x - 1][curr_y])
             {
                 cost_so_far[curr_x - 1][curr_y] = new_cost;
-                q.push({ new_cost, { curr_x - 1,curr_y } });
+                q.push({ new_cost + heuristic(curr_x - 1,curr_y,d_x,d_y), { curr_x - 1,curr_y } });
                 came_from[curr_x - 1][curr_y] = { curr_x,curr_y };
             }
         }
-        if (curr_y + 1 < numCols)
+        if (curr_y + 1 < numCols && came_from[curr_x][curr_y].second != curr_y + 1)
         {
             cout << "col+1" << endl;
             int new_cost = dis + grid[curr_x][curr_y + 1];
             if (cost_so_far[curr_x][curr_y + 1] == 0 || new_cost < cost_so_far[curr_x][curr_y + 1])
             {
                 cost_so_far[curr_x][curr_y + 1] = new_cost;
-                q.push({ new_cost, { curr_x ,curr_y + 1 } });
+                q.push({ new_cost + heuristic(curr_x,curr_y+1,d_x,d_y), { curr_x ,curr_y + 1 } });
                 came_from[curr_x][curr_y + 1] = { curr_x,curr_y };
             }
         }
-        if (curr_y - 1 >= 0)
+        if (curr_y - 1 >= 0 && came_from[curr_x][curr_y].second != curr_y - 1)
         {
             cout << "col-1" << endl;
             int new_cost = dis + grid[curr_x][curr_y - 1];
             if (cost_so_far[curr_x][curr_y - 1] == 0 || new_cost < cost_so_far[curr_x][curr_y - 1])
             {
                 cost_so_far[curr_x][curr_y - 1] = new_cost;
-                q.push({ new_cost, { curr_x ,curr_y - 1 } });
+                q.push({ new_cost + heuristic(curr_x,curr_y-1,d_x,d_y), { curr_x ,curr_y - 1 } });
                 came_from[curr_x][curr_y - 1] = { curr_x,curr_y };
             }
         }
     }
+    path.push_back({ d_x,d_y });
     while (d_x != p_x && d_y != p_y)
     {
         path.push_back({ came_from[d_x][d_y] });
-        cout << came_from[d_x][d_y].first<< came_from[d_x][d_y].second << endl;
+        //cout << came_from[d_x][d_y].first<< came_from[d_x][d_y].second << endl;
         d_x = came_from[d_x][d_y].first;
         d_y = came_from[d_x][d_y].second;
     }
+    path.push_back({ p_x,p_y });
+    for (auto i : path)
+        cout << i.first << " " << i.second << endl;
 }

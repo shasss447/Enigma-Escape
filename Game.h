@@ -4,7 +4,7 @@
 #include"Sprite.h"
 #include"Enemy.h"
 #include <queue>
-
+#include<math.h>
 class Game
 {
 public:

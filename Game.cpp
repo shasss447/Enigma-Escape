@@ -6,7 +6,7 @@ Game::Game()
         cout << "init fail" << SDL_GetError() << endl;
     if (IMG_Init(IMG_INIT_PNG) == 0)
         cout << "image init fail" << IMG_GetError << endl;
-    window = SDL_CreateWindow("car_race", 400, 100, 800, 600, 0);
+    window = SDL_CreateWindow("car_race",SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600,0);
     if (window == NULL)
         cout << "window fail" << SDL_GetError() << endl;
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
@@ -16,14 +16,14 @@ Game::Game()
     cellHeight = 25;
     numRows = 24;
     numCols = 32;
-    grid.resize(numRows,vector<int>(numCols,1));
+    grid.resize(numRows,vector<int>(numCols,1000));
     for (int i = 0; i < numRows; i++)
     {
         for (int j = 0; j < numCols; j++)
         {
             //if (i<=9&&j>20&&j<24||i>9&&i<13&&j>=5&&j<24||i>=13&&j>=5&&j<9)
-            if(i==0||j==0||i==numRows-1||j==numCols-1)
-                grid[i][j] = 0;
+            if(i==0||j==0||i==numRows-1||j==numCols-1|| i == 1 || j == 1 || i == numRows - 2 || j == numCols - 2)
+                grid[i][j] = 1;
            // cout << grid[i][j];
         }
        // cout <<endl;
@@ -192,8 +192,8 @@ void Game::draw()
 
             SDL_Texture* currentTexture = nullptr;
             int cellType = grid[row][col]; 
-           if(cellType==0) 
-              currentTexture = textures[0];
+           if(cellType==1000) 
+              currentTexture = textures[1];
            else
               currentTexture = textures[1];
             SDL_Rect cellRect = { x, y, cellWidth, cellHeight };
