@@ -3,7 +3,7 @@
 Player::Player()
 {
 	 p_pos.first= 750;
-	p_pos.second = 550;
+	p_pos.second = 250;
 	speed = 25;
 	posrec = {
 	p_pos.first,
