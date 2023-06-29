@@ -10,15 +10,15 @@ bool isValid(int& row, int& col, int& numRows, int& numCols)
     return (row >= 0 && row < numRows && col >= 0 && col < numCols);
 }
 
-void shortestpath(int &numRows,int &numCols,int p_x, int p_y,int offsetx,int offsety, vector<pair<int, int>>& path, vector<vector<int>>&grid)
+void shortestpath(int &numRows,int &numCols,int p_x, int p_y,vector<pair<int, int>>& path, vector<vector<int>>&grid)
 {
     int x, y;
     cout << "enter coord" << endl;
     cin >> x >> y;
     p_x = p_x / 25;
     p_y = p_y / 25;
-    int d_x = (y + offsety) / 25;
-    int d_y = (x + offsetx) / 25;
+    int d_x = y/ 25;
+    int d_y = x/ 25;
     priority_queue <pair<int, pair<int, int>>>q;
     q.push({ 0, { p_x,p_y } });
     vector<vector<pair<int, int>>> came_from(numRows, vector<pair<int, int>>(numCols));

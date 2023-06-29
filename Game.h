@@ -32,6 +32,5 @@ private:
 	vector<SDL_Texture*> textures;
 	vector<pair<int, int>>path;
 	const Uint8* keys;
-	pair<int, int>offset;
 };
 

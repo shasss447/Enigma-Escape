@@ -1,5 +1,6 @@
 #include "Game.h"
 #include"Helper.h"
+#include"map.h"
 Game::Game()
 {
     if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO) != 0)
@@ -16,26 +17,13 @@ Game::Game()
     cellHeight = 25;
     numRows = 24;
     numCols = 32;
-    grid.resize(numRows,vector<int>(numCols,1000));
-    for (int i = 0; i < numRows; i++)
-    {
-        for (int j = 0; j < numCols; j++)
-        {
-            //if (i<=9&&j>20&&j<24||i>9&&i<13&&j>=5&&j<24||i>=13&&j>=5&&j<9)
-            if(i==0||j==0||i==numRows-1||j==numCols-1|| i == 1 || j == 1 || i == numRows - 2 || j == numCols - 2)
-                grid[i][j] = 1;
-           // cout << grid[i][j];
-        }
-       // cout <<endl;
-    }
+    createmap(grid, numRows, numCols);
     texturePaths = {
         "textures/stone.bmp",
         "textures/blackstone2.bmp",        
     };
     
     keys = SDL_GetKeyboardState(NULL);
-    offset.first = 0;
-    offset.second = 0;
 }
 
 void Game::loop()
@@ -64,55 +52,47 @@ void Game::handleEvent()
         {
             if (event.key.keysym.sym == SDLK_UP)
             {
-                if (myplayer.p_pos.second > 25 && grid[(int)((myplayer.p_pos.second+5) / 25)][(int)(myplayer.p_pos.first / 25)] != 0)
+                if (grid[(myplayer.p_pos.second - cellWidth)/25][myplayer.p_pos.first / 25] == 1)
                 {
                     myplayer.p_pos.second -= myplayer.speed;
-                    offset.second -= myplayer.speed;
                     myplayer.previousDirection = myplayer.currentDirection;
                     myplayer.currentDirection = Player::FacingDirection::Up;
                     myplayer.change = true;
-                    cout << myplayer.previousDirection << " " << myplayer.currentDirection << " " << myplayer.angle << endl;
                 }
             }
             if (event.key.keysym.sym == SDLK_DOWN)
             {
-                if(myplayer.p_pos.second <600&& grid[(int)((myplayer.p_pos.second +35) / 25)][(int)(myplayer.p_pos.first / 25)] != 0)
+                if (grid[((myplayer.p_pos.second + cellWidth) / 25)+1][myplayer.p_pos.first / 25] == 1)
                 {
                     myplayer.p_pos.second += myplayer.speed;
-                    offset.second += myplayer.speed;
                     myplayer.previousDirection = myplayer.currentDirection;
                     myplayer.currentDirection = Player::FacingDirection::Down;
                     myplayer.change = true;
-                    cout << myplayer.previousDirection << " " << myplayer.currentDirection << " " << myplayer.angle << endl;
                 }
             }
             if (event.key.keysym.sym == SDLK_LEFT)
             {
-                if(myplayer.p_pos.first >25 && grid[(int)(myplayer.p_pos.second / 25)][(int)((myplayer.p_pos.first +5) / 25)] !=0)
+                if (grid[myplayer.p_pos.second / 25][(myplayer.p_pos.first - cellHeight)/25] == 1)
                 {
                     myplayer.p_pos.first -= myplayer.speed;
-                    offset.first -= myplayer.speed; // Adjust the X offset when moving left
                     myplayer.previousDirection = myplayer.currentDirection;
                     myplayer.currentDirection = Player::FacingDirection::Left;
                     myplayer.change = true;
-                    cout << myplayer.previousDirection << " " << myplayer.currentDirection << " "<<myplayer.angle<<endl;
                 }
             }
             if (event.key.keysym.sym == SDLK_RIGHT)
             {
-                if(myplayer.p_pos.first <800&& grid[(int)(myplayer.p_pos.second / 25)][(int)((myplayer.p_pos.first +25 ) / 25)] != 0)
+                if (grid[myplayer.p_pos.second / 25][((myplayer.p_pos.first + cellHeight) / 25)+1] == 1)
                 {
                     myplayer.p_pos.first += myplayer.speed;
-                    offset.first += myplayer.speed; // Adjust the X offset when moving right
                     myplayer.previousDirection = myplayer.currentDirection;
                     myplayer.currentDirection = Player::FacingDirection::Right;
                     myplayer.change = true;
-                    cout << myplayer.previousDirection << " " << myplayer.currentDirection << " " << myplayer.angle << endl;
                 }
             }
             if (event.key.keysym.scancode == SDL_SCANCODE_M)
             {
-                shortestpath(numRows,numCols, myplayer.p_pos.second, myplayer.p_pos.first,offset.second,offset.first, path,grid);
+                shortestpath(numRows,numCols, myplayer.p_pos.second, myplayer.p_pos.first, path,grid);
             }
 
         }
@@ -120,8 +100,8 @@ void Game::handleEvent()
 }
 void Game::update()
 {
-    myplayer.posrec.x = myplayer.p_pos.first - offset.first;
-    myplayer.posrec.y = myplayer.p_pos.second - offset.second;
+    myplayer.posrec.x = myplayer.p_pos.first;
+    myplayer.posrec.y = myplayer.p_pos.second;
     if (myplayer.change)
     {
         if (myplayer.previousDirection == Player::FacingDirection::Right)
@@ -187,13 +167,13 @@ void Game::draw()
     {
         for (int col = 0; col < numCols; ++col)
         {
-            int x = (col * cellWidth) - offset.first;
-            int y = (row * cellHeight) - offset.second;
+            int x = (col * cellWidth);
+            int y = (row * cellHeight);
 
             SDL_Texture* currentTexture = nullptr;
             int cellType = grid[row][col]; 
-           if(cellType==1000) 
-              currentTexture = textures[1];
+           if(cellType==10000) 
+              currentTexture = textures[0];
            else
               currentTexture = textures[1];
             SDL_Rect cellRect = { x, y, cellWidth, cellHeight };
@@ -204,8 +184,8 @@ void Game::draw()
     {
         for (int i = 0; i < path.size(); i++)
         {
-            int x = (path[i].second * cellWidth) - offset.first;
-            int y = (path[i].first * cellHeight) - offset.second;
+            int x = (path[i].second * cellWidth);
+            int y = (path[i].first * cellHeight);
             SDL_Rect cellRect = { x, y, cellWidth, cellHeight };
             SDL_RenderCopy(renderer, textures[0], nullptr, &cellRect);
         }
