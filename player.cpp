@@ -2,14 +2,14 @@
 
 Player::Player()
 {
-	 p_pos.first= 125;
+	 p_pos.first= 120;
 	p_pos.second = 100;
-	speed = 25;
+	speed = 20;
 	posrec = {
 	p_pos.first,
 	p_pos.second,
-	 50,
-	 50
+	 30,
+	 30
 	};
 	texture = NULL;
 	previousDirection = FacingDirection::Left;

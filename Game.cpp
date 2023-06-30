@@ -7,16 +7,16 @@ Game::Game()
         cout << "init fail" << SDL_GetError() << endl;
     if (IMG_Init(IMG_INIT_PNG) == 0)
         cout << "image init fail" << IMG_GetError << endl;
-    window = SDL_CreateWindow("car_race",SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600,0);
+    window = SDL_CreateWindow("car_race",SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1000, 600,0);
     if (window == NULL)
         cout << "window fail" << SDL_GetError() << endl;
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (renderer == NULL)
         cout << "renderer fail" << SDL_GetError() << endl;
-    cellWidth = 25;
-    cellHeight = 25;
-    numRows = 24;
-    numCols = 32;
+    cellWidth = 20;
+    cellHeight = 20;
+    numRows = 30;
+    numCols = 50;
     createmap(grid, numRows, numCols);
     texturePaths = {
         "textures/stone.bmp",
