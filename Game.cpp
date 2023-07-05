@@ -7,7 +7,7 @@ Game::Game()
         cout << "init fail" << SDL_GetError() << endl;
     if (IMG_Init(IMG_INIT_PNG) == 0)
         cout << "image init fail" << IMG_GetError << endl;
-    window = SDL_CreateWindow("car_race",SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1000, 600,0);
+    window = SDL_CreateWindow("car_race",SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,1000, 600,0);
     if (window == NULL)
         cout << "window fail" << SDL_GetError() << endl;
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
@@ -20,7 +20,8 @@ Game::Game()
     createmap(grid, numRows, numCols);
     texturePaths = {
         "textures/stone.bmp",
-        "textures/blackstone2.bmp",        
+        "textures/blackstone2.bmp",
+        "textures/blackstone.bmp"
     };
     
     keys = SDL_GetKeyboardState(NULL);
@@ -150,12 +151,11 @@ void Game::update()
 }
 void Game::draw()
 {
-    SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
     Sprite mysprite1("player/car.bmp", renderer);
     Sprite mysprite2("player/policecar.bmp",renderer);
     myplayer.texture = mysprite1.gettex();
-    enemy.texture = mysprite2.gettex();
     for (const string& path : texturePaths)
     {
         Sprite mysprite(path, renderer);
@@ -172,11 +172,16 @@ void Game::draw()
 
             SDL_Texture* currentTexture = nullptr;
             int cellType = grid[row][col]; 
-           if(cellType==10000) 
+           if(cellType==-1) 
               currentTexture = textures[0];
            else
               currentTexture = textures[1];
             SDL_Rect cellRect = { x, y, cellWidth, cellHeight };
+            // Draw vertical line
+            //SDL_RenderDrawLine(renderer, x, 0, x, 600);
+
+            // Draw horizontal line
+            //SDL_RenderDrawLine(renderer, 0, y, 1000, y);
             SDL_RenderCopy(renderer, currentTexture, nullptr, &cellRect);
         }
     }
@@ -187,12 +192,11 @@ void Game::draw()
             int x = (path[i].second * cellWidth);
             int y = (path[i].first * cellHeight);
             SDL_Rect cellRect = { x, y, cellWidth, cellHeight };
-            SDL_RenderCopy(renderer, textures[0], nullptr, &cellRect);
+            SDL_RenderCopy(renderer, textures[2], nullptr, &cellRect);
         }
     }
     SDL_RendererFlip flip = SDL_FLIP_NONE; // Default flip
     SDL_RenderCopyEx(renderer, myplayer.texture, NULL, &myplayer.posrec,myplayer.angle, NULL,flip);
-    SDL_RenderCopy(renderer, enemy.texture, NULL, &enemy.posrec);
     SDL_RenderPresent(renderer);
 }
 void Game::cleanup()

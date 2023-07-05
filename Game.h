@@ -2,7 +2,6 @@
 #include"Player.h"
 #include<vector>
 #include"Sprite.h"
-#include"Enemy.h"
 #include <queue>
 #include<math.h>
 class Game
@@ -22,7 +21,6 @@ private:
 	SDL_Window* window;
 	bool isRunning = true;
     Player myplayer;
-	Enemy enemy;
 	int cellWidth;
 	int cellHeight;
 	int numRows;
