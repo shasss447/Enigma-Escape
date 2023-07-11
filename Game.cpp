@@ -97,6 +97,17 @@ void Game::handleEvent()
             }
 
         }
+        if (event.type == SDL_MOUSEBUTTONDOWN)
+        {
+            if (event.button.button == SDL_BUTTON_LEFT) 
+            {
+                int mouseX = event.button.x;
+                int mouseY = event.button.y;
+                int blockX = mouseX / cellWidth;
+                int blockY = mouseY / cellHeight;
+                cout<<blockX*25<<" "<<blockY*25<<endl;
+            }
+        }
     }
 }
 void Game::update()
