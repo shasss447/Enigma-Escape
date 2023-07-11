@@ -3,7 +3,9 @@
 #include<SDL.h>
 #include<SDL_image.h>
 #include<string>
+
 using namespace std;
+
 class Sprite
 {
 public:

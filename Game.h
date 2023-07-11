@@ -4,8 +4,11 @@
 #include"Sprite.h"
 #include <queue>
 #include<math.h>
+
+
 class Game
 {
+
 public:
 	Game();
 	void loop();
@@ -16,7 +19,6 @@ public:
 
 
 private:
-
 	SDL_Renderer* renderer;
 	SDL_Window* window;
 	bool isRunning = true;

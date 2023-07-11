@@ -3,6 +3,7 @@
 #include<SDL.h>
 #include<utility>
 using namespace std;
+
 class Player
 {
 public:
@@ -16,6 +17,5 @@ public:
 	FacingDirection  currentDirection;
 	int angle;
 	bool change;
-
 };
 

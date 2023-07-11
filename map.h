@@ -1,9 +1,12 @@
 #pragma once
 #include<vector>
 using namespace std;
+
+//FUNCTION TO CREATE THE MAZE
 void createmap(vector<vector<int>>&grid,int &numRows,int &numCols)
 {
 	grid.resize(numRows, vector<int>(numCols,-1));
+
 	for (int i = 1; i < numCols - 1; i++)
 	{
 		if (i != 16 && i != 18 && i != 24 && i != 28 && i != 32 && i != 38 && i != 42)
@@ -62,6 +65,5 @@ void createmap(vector<vector<int>>&grid,int &numRows,int &numCols)
 			grid[27][i] = 1;
 		if (i != 4 && i != 10 && i != 12 && i != 18 && i != 22 && i != 26 && i != 30 && i != 44)
 			grid[28][i] = 1;
-
 	}
 }
